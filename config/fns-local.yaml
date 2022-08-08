@@ -1,0 +1,6 @@
+log:
+  level: debug
+  formatter: console
+  color: true
+server:
+  port: 8800

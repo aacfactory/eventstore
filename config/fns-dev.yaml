@@ -1,0 +1,5 @@
+log:
+  level: debug
+  formatter: json
+server:
+  port: 8800
