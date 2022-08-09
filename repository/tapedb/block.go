@@ -12,15 +12,12 @@ func calcBlockSize(capacity uint16, p []byte) (size uint16) {
 
 func newBlock(p []byte) (b block) {
 	b = p
-	binary.LittleEndian.PutUint32(b[0:4], 0)
-	binary.LittleEndian.PutUint16(b[4:6], 1)
-	binary.LittleEndian.PutUint16(b[6:8], 1)
 	return
 }
 
 type block []byte
 
-func (b block) Write(p []byte) (n int) {
+func (b block) Write(p []byte, segmentIdx uint16, segmentSize uint16) (n int) {
 	bLen := len(b) - 8
 	pLen := len(p)
 	if pLen-bLen < 0 {
@@ -28,14 +25,16 @@ func (b block) Write(p []byte) (n int) {
 	} else {
 		n = bLen
 	}
+	if segmentIdx == 0 {
+		segmentIdx = 1
+	}
+	if segmentSize == 0 {
+		segmentSize = 1
+	}
 	binary.LittleEndian.PutUint32(b[0:4], uint32(n))
-	copy(b[bLen+8-n:], p)
-	return
-}
-
-func (b block) ModSegment(segmentIdx uint16, segmentSize uint16) {
 	binary.LittleEndian.PutUint16(b[4:6], segmentIdx)
 	binary.LittleEndian.PutUint16(b[6:8], segmentSize)
+	copy(b[bLen+8-n:], p)
 	return
 }
 
